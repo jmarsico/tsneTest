@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "ofxCsv.h"
 #include "ofxTSNE.h"
+#include "ofxSyphon.h"
 
 class ofApp : public ofBaseApp{
 
@@ -49,4 +50,6 @@ class ofApp : public ofBaseApp{
     bool runManually;
     
     ofLight light;
+    
+    ofxSyphonServer syphon;
 };

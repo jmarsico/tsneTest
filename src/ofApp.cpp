@@ -5,8 +5,11 @@ void ofApp::setup(){
     runManually = true;
     ofEnableDepthTest();
     
+    syphon.setName("tsne");
+    
     mesh.setMode(OF_PRIMITIVE_LINES);
     mesh.enableIndices();
+//    mesh.enableColors();
     
     int numDataPoints = 1000;
     ofSetLogLevel("ofxCsv", OF_LOG_VERBOSE);
@@ -79,16 +82,19 @@ void ofApp::update(){
         
         //set up indices
         mesh.clearIndices();
+        mesh.clearColors();
         for(int a = 0; a < dataPoints.size(); a++){
             ofVec3f verta = mesh.getVertex(a);
             for(int b = a + 1; b < dataPoints.size(); b++){
                 ofVec3f vertb = mesh.getVertex(b);
                 float distance = verta.distance(vertb);
-                if (distance <= 60) {
+                if (distance <= 200) {
                     // In OF_PRIMITIVE_LINES, every pair of vertices or indices will be
                     // connected to form a line
                     mesh.addIndex(a);
                     mesh.addIndex(b);
+                    mesh.addColor(dataPoints[a].color);
+                    mesh.addColor(dataPoints[b].color);
                 }
             }
         }
@@ -101,20 +107,29 @@ void ofApp::draw(){
     ofBackground(0);
     
     cam.begin();
+    
+    light.disable();
+    ofSetColor(ofFloatColor(0.1));
+    mesh.draw();
+    
     light.enable();
     
-    ofSetLineWidth(2);
-    mesh.draw();
+    ofSetLineWidth(1);
+    
+    
+    
     for (int i=0; i<dataPoints.size(); i++) {
         float x = dataPoints[i].tsnePoint.x;
         float y = dataPoints[i].tsnePoint.y;
         float z = dataPoints[i].tsnePoint.z;
-        ofSetColor(dataPoints[i].color);
+        ofSetColor(200);
         ofDrawSphere(x, y, z, 10);
         
     }
     
     cam.end();
+    
+    syphon.publishScreen();
 }
 
 //--------------------------------------------------------------
