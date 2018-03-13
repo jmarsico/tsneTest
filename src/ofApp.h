@@ -4,6 +4,7 @@
 #include "ofxCsv.h"
 #include "ofxTSNE.h"
 #include "ofxSyphon.h"
+#include "ofxGui.h"
 
 class ofApp : public ofBaseApp{
 
@@ -11,6 +12,7 @@ class ofApp : public ofBaseApp{
 		void setup();
 		void update();
 		void draw();
+    void reset();
 
 		void keyPressed(int key);
 		void keyReleased(int key);
@@ -38,6 +40,11 @@ class ofApp : public ofBaseApp{
         int color;
         float tsneTransparency; 
     };
+    
+    ofxPanel gui;
+    ofParameter<float> distanceThresh;
+    ofParameter<float> rad;
+    ofParameter<float> meshCol;
     
     vector<sleepDataPoint> dataPoints;
     vector<vector<double>> tsnePoints;

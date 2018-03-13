@@ -7,6 +7,11 @@ void ofApp::setup(){
     
     syphon.setName("tsne");
     
+    gui.setup();
+    gui.add(distanceThresh.set("dist thresh", 200.0, 10.0, 500.0));
+    gui.add(rad.set("radius", 10, 1.0, 60.0));
+    gui.add(meshCol.set("mesh color", 0.0, 0.0, 1.0));
+    
     mesh.setMode(OF_PRIMITIVE_LINES);
     mesh.enableIndices();
 //    mesh.enableColors();
@@ -21,6 +26,8 @@ void ofApp::setup(){
     
 //    vector<ofColor> groupColors = vector<ofColor>{ofColor::green, ofColor::yellow, ofColor::orange ,ofColor::red};
     
+    
+
     
     ofEnableLighting();
     light.setPosition(ofGetWidth()/2, ofGetHeight()/2, 500);
@@ -88,13 +95,13 @@ void ofApp::update(){
             for(int b = a + 1; b < dataPoints.size(); b++){
                 ofVec3f vertb = mesh.getVertex(b);
                 float distance = verta.distance(vertb);
-                if (distance <= 200) {
+                if (distance <= distanceThresh) {
                     // In OF_PRIMITIVE_LINES, every pair of vertices or indices will be
                     // connected to form a line
                     mesh.addIndex(a);
                     mesh.addIndex(b);
-                    mesh.addColor(dataPoints[a].color);
-                    mesh.addColor(dataPoints[b].color);
+//                    mesh.addColor(dataPoints[a].color);
+//                    mesh.addColor(dataPoints[b].color);
                 }
             }
         }
@@ -104,15 +111,17 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofBackground(0);
+    ofBackgroundGradient(ofColor(80), ofColor(30));
+    ofEnableLighting();
+    ofEnableDepthTest();
     
     cam.begin();
     
-    light.disable();
-    ofSetColor(ofFloatColor(0.1));
+    light.enable();
+    ofSetColor(ofFloatColor(meshCol));
     mesh.draw();
     
-    light.enable();
+    
     
     ofSetLineWidth(1);
     
@@ -123,13 +132,42 @@ void ofApp::draw(){
         float y = dataPoints[i].tsnePoint.y;
         float z = dataPoints[i].tsnePoint.z;
         ofSetColor(200);
-        ofDrawSphere(x, y, z, 10);
+        ofDrawSphere(x, y, z, rad);
         
     }
     
     cam.end();
     
     syphon.publishScreen();
+    
+    ofDisableLighting();
+    ofDisableDepthTest();
+    gui.draw();
+}
+
+
+void ofApp::reset(){
+    vector<vector<float>> data;
+    vector<float> tempData;
+    
+    for (int i = 0 ; i < dataPoints.size(); i++) {
+        tempData.push_back(dataPoints[i].numChildren);
+        tempData.push_back(dataPoints[i].bath);
+        tempData.push_back(dataPoints[i].watchTV);
+        tempData.push_back(dataPoints[i].drinkAlcohol);
+        tempData.push_back(dataPoints[i].read);
+        tempData.push_back(dataPoints[i].sleepQuality);
+        
+        data.push_back(tempData);
+        tempData.clear();
+    }
+    
+    int dims = 3;
+    float perplexity = 40;
+    float theta = 0.2;
+    bool normalize = true;
+    
+    tsnePoints = tsne.run(data ,dims,perplexity,theta,normalize, runManually);
 }
 
 //--------------------------------------------------------------
@@ -139,6 +177,10 @@ void ofApp::keyPressed(int key){
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
+    
+    if(key == ' '){
+        reset();
+    }
 
 }
 
