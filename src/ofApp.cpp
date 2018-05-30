@@ -2,7 +2,6 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    runManually = true;
     ofEnableDepthTest();
     
     syphon.setName("tsne");
@@ -22,21 +21,18 @@ void ofApp::setup(){
     
     double x;
     x = ofToInt(csvLoader[1][0]);
-    //ofLog() << (x + 1);
-    
-//    vector<ofColor> groupColors = vector<ofColor>{ofColor::green, ofColor::yellow, ofColor::orange ,ofColor::red};
-    
     
 
-    
     ofEnableLighting();
     light.setPosition(ofGetWidth()/2, ofGetHeight()/2, 500);
     light.setAmbientColor(ofFloatColor(0.8));
     light.setDiffuseColor(ofFloatColor(0.9));
     light.setDirectional();
     
-    sleepDataPoint tempPoint;
+    
     for (int i = 1; i < (numDataPoints + 1); i++) {
+        SleepDataPoint tempPoint;
+        tempPoint.init();
         tempPoint.numChildren = ofToInt(csvLoader[i][7]);
         tempPoint.bath = ofToInt(csvLoader[i][27]);
         tempPoint.watchTV = ofToInt(csvLoader[i][31]);
@@ -71,7 +67,7 @@ void ofApp::setup(){
     float theta = 0.2;
     bool normalize = true;
     
-    tsnePoints = tsne.run(data ,dims,perplexity,theta,normalize, runManually);
+    tsnePoints = tsne.run(data ,dims,perplexity,theta,normalize, true);
     //ofLog() << data[0][1];
 }
 
@@ -79,34 +75,53 @@ void ofApp::setup(){
 void ofApp::update(){
     
     
-    if (runManually) {
+    int bReadyforNext = 0;
+    
+    for(int i = 0; i < dataPoints.size(); i++){
+        
+        dataPoints[i].update();
+        mesh.getVertices()[i] = dataPoints[i].currentPoint;
+        
+        if(dataPoints[i].bReadyForNextPoint == true){
+            bReadyforNext++;
+        }
+    }
+    
+    if(bReadyforNext == dataPoints.size()){
+//    if(true){
+        ofLog() << "iterate";
         tsnePoints = tsne.iterate();
         for (int i=0; i<dataPoints.size(); i++) {
-            dataPoints[i].tsnePoint = ofPoint(ofGetWidth() * tsnePoints[i][0], ofGetHeight() * tsnePoints[i][1], 1000 * tsnePoints[i][2]);
+            dataPoints[i].addNewPoint(ofPoint(ofGetWidth() * tsnePoints[i][0], ofGetHeight() * tsnePoints[i][1], 1000 * tsnePoints[i][2]));
             dataPoints[i].tsneTransparency = tsnePoints[i][2];
-            mesh.setVertex(i, dataPoints[i].tsnePoint);
         }
-        
-        //set up indices
-        mesh.clearIndices();
-        mesh.clearColors();
-        for(int a = 0; a < dataPoints.size(); a++){
-            ofVec3f verta = mesh.getVertex(a);
-            for(int b = a + 1; b < dataPoints.size(); b++){
-                ofVec3f vertb = mesh.getVertex(b);
-                float distance = verta.distance(vertb);
-                if (distance <= distanceThresh) {
-                    // In OF_PRIMITIVE_LINES, every pair of vertices or indices will be
-                    // connected to form a line
-                    mesh.addIndex(a);
-                    mesh.addIndex(b);
-//                    mesh.addColor(dataPoints[a].color);
-//                    mesh.addColor(dataPoints[b].color);
-                }
+    }
+    
+    
+
+    
+    
+    //set up indices
+    mesh.clearIndices();
+    mesh.clearColors();
+    
+    //update the dataPoint, lerp
+    for(int a = 0; a < dataPoints.size(); a++){
+    
+        ofVec3f verta = mesh.getVertex(a);
+        for(int b = a + 1; b < dataPoints.size(); b++){
+            ofVec3f vertb = mesh.getVertex(b);
+            float distance = verta.distance(vertb);
+            if (distance <= distanceThresh) {
+                // In OF_PRIMITIVE_LINES, every pair of vertices or indices will be
+                // connected to form a line
+                mesh.addIndex(a);
+                mesh.addIndex(b);
             }
         }
-        
     }
+        
+    
 }
 
 //--------------------------------------------------------------
@@ -128,9 +143,9 @@ void ofApp::draw(){
     
     
     for (int i=0; i<dataPoints.size(); i++) {
-        float x = dataPoints[i].tsnePoint.x;
-        float y = dataPoints[i].tsnePoint.y;
-        float z = dataPoints[i].tsnePoint.z;
+        float x = dataPoints[i].currentPoint.x;
+        float y = dataPoints[i].currentPoint.y;
+        float z = dataPoints[i].currentPoint.z;
         ofSetColor(200);
         ofDrawSphere(x, y, z, rad);
         

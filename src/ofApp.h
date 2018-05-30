@@ -5,6 +5,7 @@
 #include "ofxTSNE.h"
 #include "ofxSyphon.h"
 #include "ofxGui.h"
+#include "sleepDataPoint.hpp"
 
 class ofApp : public ofBaseApp{
 
@@ -29,24 +30,14 @@ class ofApp : public ofBaseApp{
         ofxTSNE tsne;
     ofxCsv csvLoader;
     
-    struct sleepDataPoint {
-        int numChildren;
-        int watchTV;
-        int drinkAlcohol;
-        int read;
-        int bath;
-        int sleepQuality;
-        ofPoint tsnePoint;
-        int color;
-        float tsneTransparency; 
-    };
+
     
     ofxPanel gui;
     ofParameter<float> distanceThresh;
     ofParameter<float> rad;
     ofParameter<float> meshCol;
     
-    vector<sleepDataPoint> dataPoints;
+    vector<SleepDataPoint> dataPoints;
     vector<vector<double>> tsnePoints;
     
     ofEasyCam cam;
@@ -59,4 +50,5 @@ class ofApp : public ofBaseApp{
     ofLight light;
     
     ofxSyphonServer syphon;
+    
 };
