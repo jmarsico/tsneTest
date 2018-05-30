@@ -23,20 +23,25 @@ void SleepDataPoint::addNewPoint(ofPoint newPoint){
     previousPoint = currentPoint;
     nextPoint = newPoint;
     initTime = ofGetElapsedTimeMillis();
+    bReadyForNextPoint = false;
+    
+//    ofLog() << previousPoint << " | " << nextPoint;
+    
     
 }
 
 void SleepDataPoint::update(){
     
-    auto endTime = initTime + transitionMillis;
-    auto now = ofGetElapsedTimeMillis();
+    int endTime = initTime + transitionMillis;
+    int now = ofGetElapsedTimeMillis();
     
     currentPoint.x = ofxeasing::map_clamp(now, initTime, endTime, previousPoint.x, nextPoint.x, &ofxeasing::linear::easeIn );
     currentPoint.y = ofxeasing::map_clamp(now, initTime, endTime, previousPoint.y, nextPoint.y, &ofxeasing::linear::easeIn );
     currentPoint.z = ofxeasing::map_clamp(now, initTime, endTime, previousPoint.z, nextPoint.z, &ofxeasing::linear::easeIn );
 
+//    ofLog() << previousPoint << " | " << nextPoint << " | " << currentPoint;
     
-    if(currentPoint == nextPoint) {
+    if(currentPoint.x >= nextPoint.x - 5 && currentPoint.x <= nextPoint.x + 5) {
         bReadyForNextPoint = true;
     } else {
         bReadyForNextPoint = false;

@@ -10,6 +10,7 @@ void ofApp::setup(){
     gui.add(distanceThresh.set("dist thresh", 200.0, 10.0, 500.0));
     gui.add(rad.set("radius", 10, 1.0, 60.0));
     gui.add(meshCol.set("mesh color", 0.0, 0.0, 1.0));
+    gui.add(transitionMillis.set("transition", 500, 200, 2000));
     
     mesh.setMode(OF_PRIMITIVE_LINES);
     mesh.enableIndices();
@@ -79,6 +80,7 @@ void ofApp::update(){
     
     for(int i = 0; i < dataPoints.size(); i++){
         
+        dataPoints[i].transitionMillis = transitionMillis;
         dataPoints[i].update();
         mesh.getVertices()[i] = dataPoints[i].currentPoint;
         
@@ -86,6 +88,8 @@ void ofApp::update(){
             bReadyforNext++;
         }
     }
+    
+    ofLog() << bReadyforNext << " of " << dataPoints.size();
     
     if(bReadyforNext == dataPoints.size()){
 //    if(true){

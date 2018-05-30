@@ -36,6 +36,7 @@ class ofApp : public ofBaseApp{
     ofParameter<float> distanceThresh;
     ofParameter<float> rad;
     ofParameter<float> meshCol;
+    ofParameter<float> transitionMillis;
     
     vector<SleepDataPoint> dataPoints;
     vector<vector<double>> tsnePoints;
