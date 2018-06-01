@@ -37,6 +37,9 @@ public:
     int transitionMillis;
     
     int initTime;
+    
+    vector<ofPoint> points;
+    int pointIndex;
 };
 
 

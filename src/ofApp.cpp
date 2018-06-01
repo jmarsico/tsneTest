@@ -67,8 +67,23 @@ void ofApp::setup(){
     float perplexity = 40;
     float theta = 0.2;
     bool normalize = true;
+    int maxIterations = 950;
+    int currentIteration = 0;
     
     tsnePoints = tsne.run(data ,dims,perplexity,theta,normalize, true);
+    
+    while(currentIteration < maxIterations){
+        tsnePoints = tsne.iterate();
+        for (int i=0; i<dataPoints.size(); i++) {
+            dataPoints[i].addNewPoint(ofPoint(ofGetWidth() * tsnePoints[i][0], ofGetHeight() * tsnePoints[i][1], 1000 * tsnePoints[i][2]));
+            dataPoints[i].tsneTransparency = tsnePoints[i][2];
+        }
+        currentIteration++;
+        ofLog() << currentIteration;
+    }
+
+    
+    
     //ofLog() << data[0][1];
 }
 
@@ -89,17 +104,8 @@ void ofApp::update(){
         }
     }
     
-    ofLog() << bReadyforNext << " of " << dataPoints.size();
+//    ofLog() << bReadyforNext << " of " << dataPoints.size();
     
-    if(bReadyforNext == dataPoints.size()){
-//    if(true){
-        ofLog() << "iterate";
-        tsnePoints = tsne.iterate();
-        for (int i=0; i<dataPoints.size(); i++) {
-            dataPoints[i].addNewPoint(ofPoint(ofGetWidth() * tsnePoints[i][0], ofGetHeight() * tsnePoints[i][1], 1000 * tsnePoints[i][2]));
-            dataPoints[i].tsneTransparency = tsnePoints[i][2];
-        }
-    }
     
     
 

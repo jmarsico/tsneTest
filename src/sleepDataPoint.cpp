@@ -16,14 +16,14 @@ void SleepDataPoint::init(){
     nextPoint.set(0,0,0);
     previousPoint = nextPoint;
     currentPoint = nextPoint;
+    pointIndex = 0;
 }
 
 
 void SleepDataPoint::addNewPoint(ofPoint newPoint){
-    previousPoint = currentPoint;
-    nextPoint = newPoint;
-    initTime = ofGetElapsedTimeMillis();
-    bReadyForNextPoint = false;
+
+    
+    points.push_back(newPoint);
     
 //    ofLog() << previousPoint << " | " << nextPoint;
     
@@ -42,8 +42,10 @@ void SleepDataPoint::update(){
 //    ofLog() << previousPoint << " | " << nextPoint << " | " << currentPoint;
     
     if(currentPoint.x >= nextPoint.x - 5 && currentPoint.x <= nextPoint.x + 5) {
-        bReadyForNextPoint = true;
-    } else {
+        pointIndex ++;
+        previousPoint = currentPoint;
+        if(pointIndex < points.size()) nextPoint = points[pointIndex];
+        initTime = ofGetElapsedTimeMillis();
         bReadyForNextPoint = false;
     }
     
