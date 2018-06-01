@@ -6,11 +6,17 @@ void ofApp::setup(){
     
     syphon.setName("tsne");
     
+    twister.setup();
+    
     gui.setup();
     gui.add(distanceThresh.set("dist thresh", 200.0, 10.0, 500.0));
     gui.add(rad.set("radius", 10, 1.0, 60.0));
     gui.add(meshCol.set("mesh color", 0.0, 0.0, 1.0));
-    gui.add(transitionMillis.set("transition", 500, 200, 2000));
+    gui.add(transitionMillis.set("transition", 500, 100, 4000));
+    gui.add(camDistance.set("cam dist", 500, 0, 5000));
+    gui.add(camRotSpeedLat.set("cam rot speed", 1.1, 0.01, 2.0));
+    gui.add(camRotSpeedLon.set("cam rot speed", 1.1, 0.01, 2.0));
+    gui.loadFromFile("settings.xml");
     
     mesh.setMode(OF_PRIMITIVE_LINES);
     mesh.enableIndices();
@@ -64,8 +70,8 @@ void ofApp::setup(){
     }
     
     int dims = 3;
-    float perplexity = 40;
-    float theta = 0.2;
+    float perplexity = 50;
+    float theta = 0.1;
     bool normalize = true;
     int maxIterations = 950;
     int currentIteration = 0;
@@ -81,17 +87,21 @@ void ofApp::setup(){
         currentIteration++;
         ofLog() << currentIteration;
     }
+    
+    ofAddListener(twister.eventEncoder, this, &ofApp::onEncoderUpdate);
 
-    
-    
-    //ofLog() << data[0][1];
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
     
     
-    int bReadyforNext = 0;
+    twister.update();
+    
+    ofPoint total;
+    ofPoint center;
+    
+    total.set(0,0,0);
     
     for(int i = 0; i < dataPoints.size(); i++){
         
@@ -99,17 +109,23 @@ void ofApp::update(){
         dataPoints[i].update();
         mesh.getVertices()[i] = dataPoints[i].currentPoint;
         
-        if(dataPoints[i].bReadyForNextPoint == true){
-            bReadyforNext++;
-        }
+        
+        total.x += dataPoints[i].currentPoint.x;
+        total.y += dataPoints[i].currentPoint.y;
+        total.z += dataPoints[i].currentPoint.z;
+        
     }
     
-//    ofLog() << bReadyforNext << " of " << dataPoints.size();
+    center.x = total.x/dataPoints.size();
+    center.y = total.y/dataPoints.size();
+    center.z = total.z/dataPoints.size();
     
+    
+    cam.orbit(camLat+=camRotSpeedLat, camLon+=camRotSpeedLon, camDistance, center);
+    cam.lookAt(center);
     
     
 
-    
     
     //set up indices
     mesh.clearIndices();
@@ -136,7 +152,7 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofBackgroundGradient(ofColor(80), ofColor(30));
+    ofBackground(0);
     ofEnableLighting();
     ofEnableDepthTest();
     
@@ -146,12 +162,8 @@ void ofApp::draw(){
     ofSetColor(ofFloatColor(meshCol));
     mesh.draw();
     
-    
-    
     ofSetLineWidth(1);
-    
-    
-    
+
     for (int i=0; i<dataPoints.size(); i++) {
         float x = dataPoints[i].currentPoint.x;
         float y = dataPoints[i].currentPoint.y;
@@ -193,6 +205,26 @@ void ofApp::reset(){
     bool normalize = true;
     
     tsnePoints = tsne.run(data ,dims,perplexity,theta,normalize, runManually);
+}
+
+void ofApp::onEncoderUpdate(ofxMidiFighterTwister::EncoderEventArgs & a){
+    ofLogNotice() << "Encoder '" << a.ID << "' Event! val: " << a.value;
+    
+    if(a.ID == 0){
+        rad = ofMap(a.value, 0, 127, 1.0, 60);
+    } else if(a.ID == 1){
+        distanceThresh = ofMap(a.value, 0, 127, 10.0, 500);
+    } else if(a.ID == 2){
+        transitionMillis = ofMap(a.value, 0, 127, 100, 2000);
+    } else if(a.ID == 3){
+        meshCol = ofMap(a.value, 0, 127, 0.0, 1.0);
+    } else if(a.ID == 4){
+        camDistance = ofMap(a.value, 0, 127, 0, 5000);
+    } else if(a.ID == 5){
+        camRotSpeedLat = ofMap(a.value, 0, 127, 0.01, 2.0);
+    } else if(a.ID == 6){
+        camRotSpeedLon = ofMap(a.value, 0, 127, 0.01, 2.0);
+    }
 }
 
 //--------------------------------------------------------------

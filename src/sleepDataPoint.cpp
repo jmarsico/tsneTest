@@ -35,9 +35,9 @@ void SleepDataPoint::update(){
     int endTime = initTime + transitionMillis;
     int now = ofGetElapsedTimeMillis();
     
-    currentPoint.x = ofxeasing::map_clamp(now, initTime, endTime, previousPoint.x, nextPoint.x, &ofxeasing::linear::easeIn );
-    currentPoint.y = ofxeasing::map_clamp(now, initTime, endTime, previousPoint.y, nextPoint.y, &ofxeasing::linear::easeIn );
-    currentPoint.z = ofxeasing::map_clamp(now, initTime, endTime, previousPoint.z, nextPoint.z, &ofxeasing::linear::easeIn );
+    currentPoint.x = ofxeasing::map_clamp(now, initTime, endTime, previousPoint.x, nextPoint.x, &ofxeasing::quad::easeInOut );
+    currentPoint.y = ofxeasing::map_clamp(now, initTime, endTime, previousPoint.y, nextPoint.y, &ofxeasing::quad::easeInOut );
+    currentPoint.z = ofxeasing::map_clamp(now, initTime, endTime, previousPoint.z, nextPoint.z, &ofxeasing::quad::easeInOut );
 
 //    ofLog() << previousPoint << " | " << nextPoint << " | " << currentPoint;
     

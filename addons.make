@@ -1,5 +1,7 @@
 ofxCsv
 ofxEasing
 ofxGui
+ofxMidi
+ofxMidiFighterTwister
 ofxSyphon
 ofxTSNE
