@@ -1,4 +1,5 @@
 ofxCsv
+ofxDOF
 ofxEasing
 ofxGui
 ofxMidi

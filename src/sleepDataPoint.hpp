@@ -30,7 +30,9 @@ public:
     ofPoint nextPoint;
     ofPoint previousPoint;
     ofPoint currentPoint;
-    int color;
+    
+    
+    ofColor color;
     float tsneTransparency;
     
     bool bReadyForNextPoint;

@@ -1,9 +1,20 @@
 <group>
-	<dist_thresh>148.898</dist_thresh>
-	<radius>14.937</radius>
-	<mesh_color>1</mesh_color>
-	<transition>1551.18</transition>
-	<cam_dist>1732.28</cam_dist>
+	<dist_thresh>235</dist_thresh>
+	<radius>8.965</radius>
+	<mesh_color>214, 245, 255, 255</mesh_color>
+	<transition>1133.5</transition>
+	<cam_dist>7000</cam_dist>
 	<cam_rot_speed>0.01</cam_rot_speed>
 <group/>
+<amb_amb>0.475</amb_amb>
+	<amb_diff>0.605</amb_diff>
+	<point_amb>0.155</point_amb>
+	<point_diff>0.535</point_diff>
+	<FOV>17.4</FOV>
+<bg_col>221, 223, 247, 255</bg_col>
+<cam_rot_speed_x>0.25875</cam_rot_speed_x>
+	<cam_rot_speed_y>0.01</cam_rot_speed_y>
+	<col1>255, 204, 225, 255</col1>
+	<col2>218, 245, 251, 255</col2>
+	<col3>199, 234, 208, 255</col3>
 </group>

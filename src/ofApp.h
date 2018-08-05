@@ -6,6 +6,7 @@
 #include "ofxSyphon.h"
 #include "ofxGui.h"
 #include "ofxMidiFighterTwister.h"
+#include "ofxDOF.h"
 #include "sleepDataPoint.hpp"
 
 class ofApp : public ofBaseApp{
@@ -15,6 +16,7 @@ public:
     void update();
     void draw();
     void reset();
+    void setFocalPoint(ofVec3f _point);
     
     void onEncoderUpdate(ofxMidiFighterTwister::EncoderEventArgs &);
 
@@ -36,13 +38,34 @@ public:
 
     
     ofxPanel gui;
-    ofParameter<float> distanceThresh;
+    ofParameter<int> distanceThresh;
     ofParameter<float> rad;
-    ofParameter<float> meshCol;
+    ofParameter<ofColor> meshCol;
     ofParameter<float> transitionMillis;
     ofParameter<float> camDistance;
     ofParameter<float> camRotSpeedLat;
     ofParameter<float> camRotSpeedLon;
+    ofParameter<float> fov;
+    ofParameter<float> ambAmb;
+    ofParameter<float> ambDiff;
+    ofParameter<float> pointAmb;
+    ofParameter<float> pointDiff;
+    
+    
+    ofParameter<bool> bAutoFocus;
+    ofParameter<float> focusDistance;
+    ofParameter<float> aperture;
+    ofParameter<float> blurAmount;
+    ofParameter<ofColor> bgColor;
+    ofParameter<ofColor> col1;
+    ofParameter<ofColor> col2;
+    ofParameter<ofColor> col3;
+    ofParameter<ofColor> col4;
+    
+    ofColor prevCol1, prevCol2, prevCol3, prevCol4;
+    
+    ofParameter<ofColor> light1;
+    
     
     float camLat;
     float camLon;
@@ -56,12 +79,15 @@ public:
     bool runManually;
     
     ofLight light;
+    ofLight light2;
     
     ofxSyphonServer syphon;
     
     ofCamera cam;
     
     ofxMidiFighterTwister twister;
+    
+    ofxDOF depthOfField;
     
     
 };
